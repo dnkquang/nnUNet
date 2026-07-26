@@ -1,73 +1,74 @@
 from pathlib import Path
 import shutil
 from nnunetv2.dataset_conversion.generate_dataset_json import generate_dataset_json
+from nnunetv2.paths import nnUNet_raw
 
-CAMUS_SOURCE = Path(
-    "/Users/duyenquang/Cardiotoxicity/CAMUS_public/database_nifti"
-)
-NNUNET_RAW = Path(
-    "/Users/duyenquang/nnUNet_data/nnUNet_raw"
-)
 
-DATASET_NAME = "Dataset001_CAMUS"
-output_folder = NNUNET_RAW / DATASET_NAME
-imagesTr = output_folder / "imagesTr"
-labelsTr = output_folder / "labelsTr"
-imagesTr.mkdir(parents=True, exist_ok=True)
-labelsTr.mkdir(parents=True, exist_ok=True)
+if __name__ == "__main__":
+    CAMUS_SOURCE = Path(
+        "/N/u/dquang/Quartz/CAMUS_public/database_nifti"
+    )
 
-num_training_cases = 0
+    DATASET_NAME = "Dataset001_CAMUS"
+    output_folder = nnUNet_raw / DATASET_NAME
+    imagesTr = output_folder / "imagesTr"
+    labelsTr = output_folder / "labelsTr"
 
-views = ["2CH", "4CH"]
-phases = ["ED", "ES"]
+    imagesTr.mkdir(parents=True, exist_ok=True)
+    labelsTr.mkdir(parents=True, exist_ok=True)
 
-for patient_folder in sorted(CAMUS_SOURCE.iterdir()):
-    if not patient_folder.is_dir():
-        continue
+    num_training_cases = 0
 
-    patient_id = patient_folder.name
+    views = ["2CH", "4CH"]
+    phases = ["ED", "ES"]
 
-    for view in views:
-        for phase in phases:
+    for patient_folder in sorted(CAMUS_SOURCE.iterdir()):
+        if not patient_folder.is_dir():
+            continue
 
-            image_name = f"{patient_id}_{view}_{phase}.nii.gz"
-            label_name = f"{patient_id}_{view}_{phase}_gt.nii.gz"
+        patient_id = patient_folder.name
 
-            image_path = patient_folder / image_name
-            label_path = patient_folder / label_name
+        for view in views:
+            for phase in phases:
+                image_name = f"{patient_id}_{view}_{phase}.nii.gz"
+                label_name = f"{patient_id}_{view}_{phase}_gt.nii.gz"
 
-            if not image_path.exists():
-                print(f"Missing image: {image_path}")
-                continue
+                image_path = patient_folder / image_name
+                label_path = patient_folder / label_name
 
-            if not label_path.exists():
-                print(f"Missing label: {label_path}")
-                continue
+                if not image_path.exists():
+                    print(f"Missing image: {image_path}")
+                    continue
 
-            case_id = f"{patient_id}_{view}_{phase}"
+                if not label_path.exists():
+                    print(f"Missing label: {label_path}")
+                    continue
 
-            output_image = imagesTr / f"{case_id}_0000.nii.gz"
-            output_label = labelsTr / f"{case_id}.nii.gz"
-            shutil.copy(image_path, output_image)
-            shutil.copy(label_path, output_label)
+                case_id = f"{patient_id}_{view}_{phase}"
 
-            num_training_cases += 1
+                output_image = imagesTr / f"{case_id}_0000.nii.gz"
+                output_label = labelsTr / f"{case_id}.nii.gz"
 
-generate_dataset_json(
-    output_folder,
-    channel_names={
-        "0": "ultrasound",
-    },
-    labels={
-        "background": 0,
-        "LV": 1,
-        "Myocardium": 2,
-        "LeftAtrium": 3,
-    },
-    num_training_cases=num_training_cases,
-    file_ending=".nii.gz",
-    dataset_name="CAMUS",
-    reference="CAMUS Challenge",
-    release="1.0",
-    description="Cardiac Acquisitions for Multi-structure Ultrasound Segmentation"
-)
+                shutil.copy(image_path, output_image)
+                shutil.copy(label_path, output_label)
+
+                num_training_cases += 1
+
+    generate_dataset_json(
+        output_folder,
+        channel_names={
+            0: "ultrasound",
+        },
+        labels={
+            "background": 0,
+            "LV": 1,
+            "Myocardium": 2,
+            "LeftAtrium": 3,
+        },
+        num_training_cases=num_training_cases,
+        file_ending=".nii.gz",
+        dataset_name="CAMUS",
+        reference="CAMUS Challenge",
+        release="1.0",
+        description="Cardiac Acquisitions for Multi-structure Ultrasound Segmentation",
+    )
