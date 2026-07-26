@@ -1,24 +1,18 @@
 from pathlib import Path
 import shutil
-
 from nnunetv2.dataset_conversion.generate_dataset_json import generate_dataset_json
 
 CAMUS_SOURCE = Path(
     "/Users/duyenquang/Cardiotoxicity/CAMUS_public/database_nifti"
 )
-
 NNUNET_RAW = Path(
     "/Users/duyenquang/nnUNet_data/nnUNet_raw"
 )
 
 DATASET_NAME = "Dataset001_CAMUS"
-
-
 output_folder = NNUNET_RAW / DATASET_NAME
-
 imagesTr = output_folder / "imagesTr"
 labelsTr = output_folder / "labelsTr"
-
 imagesTr.mkdir(parents=True, exist_ok=True)
 labelsTr.mkdir(parents=True, exist_ok=True)
 
@@ -28,13 +22,10 @@ views = ["2CH", "4CH"]
 phases = ["ED", "ES"]
 
 for patient_folder in sorted(CAMUS_SOURCE.iterdir()):
-
     if not patient_folder.is_dir():
         continue
 
     patient_id = patient_folder.name
-
-    print(f"Processing {patient_id}")
 
     for view in views:
         for phase in phases:
@@ -57,14 +48,10 @@ for patient_folder in sorted(CAMUS_SOURCE.iterdir()):
 
             output_image = imagesTr / f"{case_id}_0000.nii.gz"
             output_label = labelsTr / f"{case_id}.nii.gz"
-
             shutil.copy(image_path, output_image)
             shutil.copy(label_path, output_label)
 
             num_training_cases += 1
-
-print()
-print(f"Finished copying {num_training_cases} training cases.")
 
 generate_dataset_json(
     output_folder,
@@ -84,5 +71,3 @@ generate_dataset_json(
     release="1.0",
     description="Cardiac Acquisitions for Multi-structure Ultrasound Segmentation"
 )
-
-print("dataset.json created successfully.")
