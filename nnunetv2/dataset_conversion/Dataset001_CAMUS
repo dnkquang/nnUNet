@@ -6,11 +6,11 @@ from nnunetv2.paths import nnUNet_raw
 
 if __name__ == "__main__":
     CAMUS_SOURCE = Path(
-        "/N/u/dquang/Quartz/CAMUS_public/database_nifti"
+        "/Users/duyenquang/Cardiotoxicity/CAMUS_public/database_nifti"
     )
 
     DATASET_NAME = "Dataset001_CAMUS"
-    output_folder = nnUNet_raw / DATASET_NAME
+    output_folder = Path(nnUNet_raw) / DATASET_NAME
     imagesTr = output_folder / "imagesTr"
     labelsTr = output_folder / "labelsTr"
 
