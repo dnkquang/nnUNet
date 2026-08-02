@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Convert the CAMUS NIfTI dataset into a leakage-free nnU-Net v2 dataset.
+"""Change the patient cohort for training and validation to match CAMUS benchmark tests.
 
 Development cohort:
     patients 0001-0450 -> imagesTr and labelsTr
@@ -205,14 +205,13 @@ def main() -> None:
         num_training_cases=train_cases,
         file_ending=".nii.gz",
         dataset_name="CAMUS",
-        reference="CAMUS Challenge",
+        reference="S. Leclerc, E. Smistad, J. Pedrosa, A. Ostvik, et al. 'Deep Learning for Segmentation using an Open Large-Scale Dataset in 2D Echocardiography'",
         release="1.0",
         description=(
-            "CAMUS echocardiography segmentation dataset. Patients 0001-0450 are "
-            "used for development; patients 0451-0500 are held out for final testing."
+            "CAMUS echocardiography segmentation dataset."
         ),
-        license="See the CAMUS Challenge dataset terms.",
-        converted_by="dnkquang",
+        license="CC BY-NC-SA 4.0 license",
+        converted_by="Duyen Quang",
     )
 
     manifest = {
